@@ -3,8 +3,10 @@ import os
 
 from dotenv import load_dotenv
 from telegram import Update
-from telegram.ext import filters, ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, ConversationHandler
+from telegram.ext import (ApplicationBuilder, CommandHandler, ContextTypes,
+                          ConversationHandler, MessageHandler, filters)
 
+import birthdays
 import messages
 
 load_dotenv()
@@ -24,24 +26,29 @@ logging.basicConfig(
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
-    text = messages.GREETINGS
     await context.bot.send_sticker(chat_id=chat_id, sticker='CAADAgADOQADfyesDlKEqOOd72VKAg')
-    await context.bot.send_message(chat_id=chat_id, text=text)
+    await context.bot.send_message(chat_id=chat_id, text=messages.GREETINGS)
 
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
-    text = messages.HELP
-    await context.bot.send_message(chat_id=chat_id, text=text)
+    await context.bot.send_message(chat_id=chat_id, text=messages.HELP)
 
 
 async def bday_list(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
-    await context.bot.send_message(chat_id=chat_id, text=update.message.text)
-    NAME = name(update, context)
-    await context.bot.send_message(chat_id=chat_id, text=NAME)
+    items = await birthdays.get_bday_list(chat_id)
+    response = ''
+    for index, birthday in enumerate(items):
+        response += f'{index + 1}. {birthday.name} - {birthday.date}\n'
+    if response == '':
+        response = 'Вы не добавили ни одного дня рождения'
+    await context.bot.send_message(chat_id=chat_id, text=response)
+
 
 async def add_bday(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = update.effective_chat.id
+    await context.bot.send_message(chat_id=chat_id, text=messages.ADD)
     return NAME
 
 
@@ -49,10 +56,8 @@ async def name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global name
     chat_id = update.effective_chat.id
     name = update.message.text
-    await context.bot.send_message(chat_id=chat_id, text=name)
     await update.message.reply_text("Next is date.")
     return DATE
-    # await context.bot.send_message(chat_id=chat_id, text=text)
 
 async def date(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global date
@@ -75,8 +80,8 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 async def insert(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
-    await context.bot.send_message(chat_id=chat_id, text=date + name)
-    return ConversationHandler.END
+    await birthdays.add_bday(chat_id, name, date)
+    await context.bot.send_message(chat_id=chat_id, text='Готово!')
 
 if __name__ == '__main__':
     application = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()

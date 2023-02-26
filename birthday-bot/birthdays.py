@@ -6,18 +6,46 @@ import conf
 
 @dataclass
 class Birthday:
-    id: int
     user_id: int
     name: str
     date: datetime
 
 
-# async def get_bday_list():
-#     result = []
-#     async with aiosqlite.connect(conf.DATABASE_FILE) as db:
-#         async with db.execute("SELECT * FROM birthdays;") as cursor:
-#             async for row in cursor:
-#                 result.append(Birthday(
-#                     id=row['id'],
-#                     user_id=
-#                 ))
+async def get_bday_list(user_id):
+    result = []
+    db = await aiosqlite.connect(conf.DATABASE_FILE)
+    db.row_factory = aiosqlite.Row
+    command = 'SELECT * FROM birthdays WHERE user_id = ?;'
+    cursor = await db.execute(command, (user_id,))
+    # rows = await cursor.fetchall()
+    async for row in cursor:
+        result.append(Birthday(
+            user_id=row['user_id'],
+            name=row['name'],
+            date=row['date'],
+        ))
+    await db.close()
+    return result
+    # result = []
+    # async with aiosqlite.connect(conf.DATABASE_FILE) as db:
+    #     db.row_factory = aiosqlite.Row
+    #     async with db.execute("SELECT * FROM birthdays;") as cursor:
+    #         async for row in cursor:
+    #             result.append(Birthday(
+    #                 user_id=row['user_id'],
+    #                 name=row['name'],
+    #                 date=row['date']
+    #             ))
+    # return result
+
+
+async def add_bday(chat_id, name, date):
+    db = await aiosqlite.connect(conf.DATABASE_FILE)
+    command = (
+        'INSERT INTO birthdays (user_id, name, date, ordering)'
+        'VALUES (?, ?, ?, 4);'
+    )
+    await db.execute(command, (chat_id, name, date))
+    await db.commit()
+    await db.close()
+    return 'Done'

@@ -1,1 +1,1 @@
-DATABASE = 'db.sqlite3'
+DATABASE_FILE = '../db.sqlite3'
