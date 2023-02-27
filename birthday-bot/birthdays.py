@@ -17,7 +17,6 @@ async def get_bday_list(user_id):
     db.row_factory = aiosqlite.Row
     command = 'SELECT * FROM birthdays WHERE user_id = ?;'
     cursor = await db.execute(command, (user_id,))
-    # rows = await cursor.fetchall()
     async for row in cursor:
         result.append(Birthday(
             user_id=row['user_id'],
@@ -48,4 +47,15 @@ async def add_bday(chat_id, name, date):
     await db.execute(command, (chat_id, name, date))
     await db.commit()
     await db.close()
-    return 'Done'
+    return
+
+
+async def delete_birthday(chat_id, month, index):
+    db = await aiosqlite.connect(conf.DATABASE_FILE)
+    command = (
+        'DELETE FROM birthdays WHERE user_id = ? AND name = ? AND date = ?;'
+    )
+    await db.commit()
+    await db.close()
+    return
+
