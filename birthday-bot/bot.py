@@ -14,6 +14,7 @@ import datetime
 import messages
 import calendar
 import const
+import utils
 
 load_dotenv()
 
@@ -144,64 +145,58 @@ async def delete_birthday(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def show_month(update, context):
-    month = const.MONTH['Январь']
+    current_month = const.MONTH_NUM[datetime.date.today().month]['en']
+    data = const.MONTH[current_month]
+
     keyboard = [
         [
-            InlineKeyboardButton('Декабрь', callback_data='Март'),
-            InlineKeyboardButton('Фефраль', callback_data='Февраль'),
+            InlineKeyboardButton(
+                '⬅️ ' + data['left']['ru'],
+                callback_data=data['left']['en']
+            ),
+            InlineKeyboardButton(
+                data['right']['ru'] + ' ➡️',
+                callback_data=data['right']['en']
+            ),
         ],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(text=month['calendar'], parse_mode=telegram.constants.ParseMode.HTML, reply_markup=reply_markup)
 
-
-# async def january(update, context):
-#     query = update.callback_query
-#     keyboard = [
-#         [
-#             InlineKeyboardButton("Январь", callback_data=str(JANUARY)),
-#         ]
-#     ]
-#     reply_markup = InlineKeyboardMarkup(keyboard)
-#     await query.answer()
-#     await query.edit_message_text(text='Январь', reply_markup=reply_markup)
-#     return MONTH
+    await update.message.reply_text(
+        text=utils.get_month_calendar(data['num']),
+        parse_mode=telegram.constants.ParseMode.HTML,
+        reply_markup=reply_markup
+    )
 
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Parses the CallbackQuery and updates the message text."""
-    query = update.callback_query
 
-    # CallbackQueries need to be answered, even if no notification to the user is needed
-    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
+    query = update.callback_query
     await query.answer()
 
     month = query.data
     data = const.MONTH[month]
-    # if month == '1':
-    #     keyboard = [
-    #         [
-    #             InlineKeyboardButton('Декабрь', callback_data='12'),
-    #             InlineKeyboardButton('Фефраль', callback_data='2'),
-    #         ],
-    #     ]
-    # elif month == '2':
-    #     keyboard = [
-    #         [
-    #             InlineKeyboardButton('Январь', callback_data='1'),
-    #             InlineKeyboardButton('Март', callback_data='3'),
-    #         ],
-    #     ]
-    # elif month == '3':
+
     keyboard = [
         [
-            InlineKeyboardButton(data['left'], callback_data=data['left']),
-            InlineKeyboardButton(data['right'], callback_data=data['right']),
+            InlineKeyboardButton(
+                '⬅️ ' + data['left']['ru'],
+                callback_data=data['left']['en']
+            ),
+            InlineKeyboardButton(
+                data['right']['ru'] + ' ➡️',
+                callback_data=data['right']['en']
+            ),
         ],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    await query.edit_message_text(text=data['calendar'], parse_mode=telegram.constants.ParseMode.HTML, reply_markup=reply_markup)
+    await query.edit_message_text(
+        text=utils.get_month_calendar(data['num']),
+        parse_mode=telegram.constants.ParseMode.HTML,
+        reply_markup=reply_markup
+    )
 
 
 if __name__ == '__main__':
