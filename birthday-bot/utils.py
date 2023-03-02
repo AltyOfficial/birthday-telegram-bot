@@ -20,20 +20,16 @@ def get_month_calendar(month):
     month_value = const.MONTH_NUM[month]['rus']
     text = f'{month_value} {year} 🗓\n<code>'
 
-    cond = False
-    if month == datetime.date.today().month:
-        cond = True
-
     data = calendar.month(year, month)
+    today = str(datetime.date.today().day)
+
+    if month == datetime.date.today().month:
+        data = data.replace(f'{today}', f'</code><u>{today}</u><code>', 1)
+
     for en, ru in weekdays.items():
         data = data.replace(en, ru)
 
     text += data[data.find('Пн'):]
-    today = str(datetime.date.today().day)
-
-    if cond:
-        text = text.replace(f'{today}', f'</code><u>{today}</u><code>', 1)
-
     final = f'{text}</code>'
 
     return final
