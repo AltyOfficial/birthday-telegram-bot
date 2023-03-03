@@ -153,50 +153,62 @@ MONTH = {
 MONTH_NUM = {
     1: {
         'rus': 'Январь',
-        'en': 'January'
+        'in_text': 'января',
+        'en': 'January',
     },
     2: {
         'rus': 'Февраль',
-        'en': 'February'
+        'in_text': 'февраля',
+        'en': 'February',
     },
     3: {
         'rus': 'Март',
-        'en': 'March'
+        'in_text': 'марта',
+        'en': 'March',
     },
     4: {
         'rus': 'Апрель',
-        'en': 'April'
+        'in_text': 'апреля',
+        'en': 'April',
     },
     5: {
         'rus': 'Май',
-        'en': 'May'
+        'in_text': 'мая',
+        'en': 'May',
     },
     6: {
         'rus': 'Июнь',
-        'en': 'June'
+        'in_text': 'июня',
+        'en': 'June',
     },
     7: {
         'rus': 'Июль',
-        'en': 'July'
+        'in_text': 'июля',
+        'en': 'July',
     },
     8: {
         'rus': 'Август',
-        'en': 'August'
+        'in_text': 'августа',
+        'en': 'August',
     },
     9: {
         'rus': 'Сентябрь',
-        'en': 'September'
+        'in_text': 'сентября',
+        'en': 'September',
     },
     10: {
         'rus': 'Октябрь',
-        'en': 'October'
+        'in_text': 'октября',
+        'en': 'October',
     },
     11: {
         'rus': 'Ноябрь',
-        'en': 'November'
+        'in_text': 'ноября',
+        'en': 'November',
     },
     12: {
         'rus': 'Декабрь',
-        'en': 'December'
+        'in_text': 'декабря',
+        'en': 'December',
     },
 }

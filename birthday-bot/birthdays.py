@@ -22,7 +22,11 @@ async def get_birthday_list(user_id, month_num=None):
     if len(str(month_num)) == 1:
         month_num = '0' + str(month_num)
 
-    command = 'SELECT * FROM birthdays WHERE user_id = ? and date LIKE ?;'
+    command = """
+        SELECT * FROM birthdays 
+        WHERE user_id = ? and date LIKE ? 
+        ORDER BY CAST(SUBSTR(date, 1, 3) AS INTEGER);
+    """
     cursor = await db.execute(command, (user_id, f'%.{month_num}.%',))
 
     async for row in cursor:
@@ -38,21 +42,7 @@ async def get_birthday_list(user_id, month_num=None):
 
 
 async def get_bday_list(user_id):
-    result = []
-    db = await aiosqlite.connect(conf.DATABASE_FILE)
-    db.row_factory = aiosqlite.Row
-    command = 'SELECT * FROM birthdays WHERE user_id = ? and date LIKE ?;'
-    cursor = await db.execute(command, (user_id, '%.02.%'))
-    # command = 'SELECT * FROM birthdays WHERE user_id = ?;'
-    # cursor = await db.execute(command, (user_id,))
-    async for row in cursor:
-        result.append(Birthday(
-            user_id=row['user_id'],
-            name=row['name'],
-            date=row['date'],
-        ))
-    await db.close()
-    return result
+    pass
     # result = []
     # async with aiosqlite.connect(conf.DATABASE_FILE) as db:
     #     db.row_factory = aiosqlite.Row
